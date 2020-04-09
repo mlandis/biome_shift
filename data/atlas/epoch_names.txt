@@ -1,0 +1,9 @@
+index,start_age,end_age,name
+0,100.0,66.0,Late Cretaceous
+1,66.0,56.0,Paleocene
+2,56.0,48.0,Early Eocene
+3,48.0,33.9,Mid/Late Eocene
+4,33.9,23.0,Oligocene
+5,23.0,16.0,Early Miocene
+6,16.0,05.3,Mid/Late Miocene
+7,05.3,00.0,Recent

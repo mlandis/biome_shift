@@ -1,0 +1,204 @@
+#NEXUS
+
+Begin data;
+Dimensions ntax=173 nchar=1;
+Format datatype=Standard symbols="ABCDEFLMNOPQUVWXYZ" missing=? gap=-;
+Matrix
+
+[ H    SE_Asia  A   0 = 1 1 ]
+[ H    E_Asia   B   1 = 1 2 ]
+[ H    Europe   C   2 = 1 3 ]
+[ H    N_Amer   D   3 = 1 4 ]
+[ H    C_Amer   E   4 = 1 5 ]
+[ H    S_Amer   F   5 = 1 6 ]
+[ L/C  SE_Asia  L   6 = 2 1 ]
+[ L/C  E_Asia   M   7 = 2 2 ]
+[ L/C  Europe   N   8 = 2 3 ]
+[ L/C  N_Amer   O   9 = 2 4 ]
+[ L/C  C_Amer   P  10 = 2 5 ]
+[ L/C  S_Amer   Q  11 = 2 6 ] 
+[ T    SE_Asia  U  12 = 3 1 ]
+[ T    E_Asia   V  13 = 3 2 ]
+[ T    Europe   W  14 = 3 3 ]
+[ T    N_Amer   X  15 = 3 4 ]
+[ T    C_Amer   Y  16 = 3 5 ]
+[ T    S_Amer   Z  17 = 3 6 ]
+
+V_acerifolium             X
+V_acutifolium             P
+V_adenophorum             M
+V_amplificatum            A
+V_amplifolium             M 
+V_anabaptista             Q
+V_anamensis               (L M) [ updated 180521: M -> (L M) ]
+V_atrocyaneum             M     [ updated 180521: V -> M ]
+V_australe                P     [ updated 180521: Y -> P ]
+V_awabuki                 M
+V_ayavacense              Q
+V_beccarii                A
+V_betulifolium            V
+V_bitchiuense             V
+V_blandum                 P
+V_brachyandrum            M     [ updated 180521: V -> M ]
+V_brachybotryum           M
+V_bracteatum              X
+V_brevipes                (M V)
+V_brevitubum              (M V)
+V_buddleifolium           V
+V_burejaeticum            V
+V_calvum                  (M V)    [ updated 180521: V -> (M V) ]
+V_carlesii                V
+V_cassinoides             X
+V_caudatum                P
+V_chingii                 (M V)
+V_chinshanense            (M V)
+V_chunii                  M
+V_ciliatum                P
+V_cinnamomifolium         M
+V_clemensiae              A
+V_colebrookeanum          A
+V_congestum               (M V)
+V_coriaceum               A
+V_corylifolium            M
+V_corymbiflorum           M
+V_costaricanum            P
+V_cotinifolium            V
+V_cylindricum             M
+V_dalzielii               M
+V_davidii                 M
+V_dentatum                X
+V_dilatatum               V
+V_discolor                P
+V_disjunctum              P
+V_divaricatum             Q
+V_edule                   X
+V_elatum                  P
+V_ellipticum              O     [ updated 180521: X -> O ]
+V_erosum                  V
+V_erubescens              V
+V_farreri                 V
+V_flavescens              V
+V_foetens                 V
+V_foetidum                M
+V_fordiae                 M
+V_formosanum              M
+V_furcatum                V
+V_garrettii               (A L) [ updated 180521: A -> (A L) ]
+V_glaberrimum             A
+V_glabratum               Q
+V_glomeratum              V
+V_grandiflorum            V
+V_hainanense              M
+V_hallii                  Q
+V_hanceanum               M
+V_hartwegii               P
+V_hebanthum               A
+V_henryi                  M
+V_hispidulum              A
+V_hondurense              P
+V_hupehense               V
+V_ichangense              V
+V_inopinatum              L
+V_integrifolium           M
+V_jamesonii               Q
+V_japonicum               M
+V_jucundum                P
+V_junghunii               L
+V_kansuense               V
+V_koreanum                V
+V_lancifolium             M
+V_lantana                 W
+V_lantanoides             X
+V_lasiophyllum            Q
+V_laterale                M
+V_lautum                  P
+V_leiocarpum              L
+V_lentago                 X
+V_lepidotulum             (A B)  [ updated 180521: A -> (A B) ]
+V_lobophyllum             V
+V_loeseneri               P
+V_longipedunculatum       M
+V_longiradiatum           (M V)
+V_lutescens               A
+V_luzonicum               M
+V_macrocephalum           V
+V_maculatum               W
+V_melanocarpum            V
+V_microcarpum             P
+V_microphyllum            P
+V_molle                   X
+V_mongolicum              V
+V_mullaha                 V      [ updated 180521: M -> V ]
+V_nervosum                V
+V_nudum                   O      [ updated 180521: (O X) -> O ]
+V_obovatum                O      [ updated 180521: (O X) -> O ]
+V_obtectum                Q
+V_obtusatum               P
+V_odoratissimum           (L M)  [ updated 180521: M -> (L M) ]
+V_oliganthum              V      [ updated 180521: (M V) -> V ]
+V_omeiense                (M V)
+V_opulus                  W
+V_orientale               W
+V_parvifolium             M      [ updated 180521: V -> M ]
+V_phlebotrichum           V
+V_pichinchense            Q
+V_plicatum                V
+V_propinquum              M
+V_prunifolium             X
+V_punctatum               A
+V_pyramidatum             M
+V_rafinesquianum          X
+V_recognitum              X
+V_rhytidophyllum          V
+V_rigidum                 N
+V_rufidulum               (O X)
+V_sambucinum              A
+V_sargentii               V
+V_scabrellum              O      [ updated 180521: X -> O ]
+V_schensianum             V
+V_seemenii                Q
+V_sempervirens            M
+V_setigerum               V
+V_shweliense              (M V)
+V_sieboldii               V
+V_squamulosum             M
+V_stellato_tomentosum     P
+V_stenocalyx              P
+V_stipitatum              Q
+V_subalpinum              V
+V_subsessile              Q
+V_sulcatum                P
+V_suspensum               M
+V_sympodiale              V
+V_taitoense               M
+V_taiwanianum             M
+V_tashiroi                M
+V_tengyuehense            (M V)
+V_ternatum                M
+V_tinoides                Q
+V_tinus                   N
+V_toronis                 Q
+V_treleasei               N
+V_trilobum                X
+V_triphyllum              Q
+V_triplinerve             M
+V_undulatum               Q
+V_urceolatum              V
+V_utile                   V
+V_veitchii                V
+V_venustum                P
+V_vernicosum              A
+V_villosum                P
+V_wardii                  M
+V_wrightii                V
+V_yunnanense              M
+Valvatotinus_NWT          O
+Valvatotinus_PB           N         [ updated 180521: (C N) -> N ]
+Valvatotinus_IS           (N O W X) [ updated 180521: (N W) -> (N O W X) ]
+Viburnum_BC               O
+Porphyrotinus_CO          O
+;
+End;
+
+
+
