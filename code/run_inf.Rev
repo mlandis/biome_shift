@@ -1,0 +1,85 @@
+#!/usr/bin/rb
+
+print("Starting...")
+
+if (!exists("sim_name"))     sim_name     = "run"
+if (!exists("under_prior"))  under_prior  = false
+if (!exists("epoch_str"))    epoch_str    = v("paleo","modern","ancient","null")[2]
+
+
+# filesystem variables
+fp           = "/Users/mlandis/projects/gh_biome_shift/"
+data_fp      = fp + "data/"
+atlas_fn     = data_fp + "atlas/"
+times_fn     = data_fp + "atlas/epoch_times.txt"
+tree_fn      = data_fp + "viburnum.no_fossil.radseq_only.tre"
+range_fn     = data_fp + "viburnum_areas_a6b3.nex"
+out_fn       = fp + "output/" + sim_name
+out_fn       = out_fn + "." + epoch_str
+
+#under_prior = true
+if (under_prior) {
+    out_fn = out_fn + ".prior"
+}
+
+print("out_fn = " + out_fn)
+
+# analysis helper variables
+mvi = 1
+mni = 1
+print_gen = 50
+n_gen = 25000
+
+# initial tree and taxa
+phy <- readTrees(tree_fn)[1]
+taxa = phy.taxa()
+n_taxa = taxa.size()
+n_branches = 2 * n_taxa - 2
+
+# some data
+dat_range = readDiscreteCharacterData(range_fn)
+
+# build the times
+epoch_times_raw = readDataDelimitedFile(times_fn, delimiter=",")
+n_epochs = epoch_times_raw.nrows()
+for (i in 1:n_epochs) {
+    epoch_times[i] <- abs( epoch_times_raw[i][1] )
+}
+
+# build the connectivity graphs
+graph_names = [ "land", "tropical", "temperate", "boreal" ]
+n_graphs = graph_names.size()
+n_biomes = n_graphs - 1
+for (i in 1:n_graphs) {
+    for (j in 1:n_epochs) {
+        tmp_fn = atlas_fn+graph_names[i]+"/"+(j-1)+"_"+graph_names[i]+".graph.txt"
+        graph[j][i] = readDataDelimitedFile(tmp_fn, delimiter=",")
+    }
+}
+n_areas = graph[1][1].size()
+n_states = n_areas * n_biomes
+
+source("model_biome.Rev")
+
+monitors[mni++] = mnScreen(root_age, printgen=1)
+monitors[mni++] = mnFile(phy, filename=out_fn+".tre",printgen=print_gen)
+monitors[mni++] = mnFile(y_marginal,y_subdominant,w_graph,rf_simplex, filename=out_fn+".rf.log",printgen=print_gen)
+monitors[mni++] = mnModel(filename=out_fn+".model.log",printgen=print_gen )
+monitors[mni++] = mnJointConditionalAncestralState(tree=phy,
+                                                   ctmc=m_biome,
+                                                   filename=out_fn+".states.log",
+                                                   type="Standard",
+                                                   withTips=true,
+                                                   separator="\t",
+                                                   printgen=print_gen)
+monitors[mni++] = mnStochasticCharacterMap(filename=out_fn+".stoch.log",
+                                           printgen=print_gen,
+                                           ctmc=m_biome)
+
+mdl = model(phy)
+
+ch = mcmc(moves, monitors, mdl)
+ch.run(n_gen, underPrior=under_prior)
+
+q()
+
