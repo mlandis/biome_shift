@@ -6,6 +6,6 @@ This directory contains the main files needed to conduct the inferences publishe
 
 Subdirectories:
 - `data` contains the dataset used for the RevBayes analyses.
-- `code` contains RevBayes scripts (NB: currently being cleaned/commented).
+- `code` contains RevBayes scripts (NB: currently being cleaned/commented, will add plotting scripts).
 
 Please feel welcome to contact [michael.landis@wustl.edu](mailto:michael.landis@wustl.edu) with any questions, comments, or just to say hello.
