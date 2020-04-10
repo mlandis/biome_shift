@@ -62,11 +62,9 @@ n_states = n_areas * n_biomes
 
 source("model_biome.Rev")
 
-xx
-
 monitors[mni++] = mnScreen(root_age, printgen=1)
 monitors[mni++] = mnFile(phy, filename=out_fn+".tre",printgen=print_gen)
-monitors[mni++] = mnFile(y_marginal,y_subdominant,w_graph,rf_simplex, filename=out_fn+".rf.log",printgen=print_gen)
+monitors[mni++] = mnFile(y,w_graph,rf_simplex, filename=out_fn+".rf.log",printgen=print_gen)
 monitors[mni++] = mnModel(filename=out_fn+".model.log",printgen=print_gen )
 monitors[mni++] = mnJointConditionalAncestralState(tree=phy,
                                                    ctmc=m_biome,
@@ -80,7 +78,7 @@ monitors[mni++] = mnStochasticCharacterMap(filename=out_fn+".stoch.log",
                                            ctmc=m_biome)
 
 mdl = model(phy)
-
+xx
 ch = mcmc(moves, monitors, mdl)
 ch.run(n_gen, underPrior=under_prior)
 
