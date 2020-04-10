@@ -32,6 +32,7 @@ n_gen = 25000
 
 # initial tree and taxa
 phy <- readTrees(tree_fn)[1]
+root_age <- phy.rootAge()
 taxa = phy.taxa()
 n_taxa = taxa.size()
 n_branches = 2 * n_taxa - 2
@@ -60,6 +61,8 @@ n_areas = graph[1][1].size()
 n_states = n_areas * n_biomes
 
 source("model_biome.Rev")
+
+xx
 
 monitors[mni++] = mnScreen(root_age, printgen=1)
 monitors[mni++] = mnFile(phy, filename=out_fn+".tre",printgen=print_gen)
