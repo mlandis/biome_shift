@@ -2,10 +2,10 @@
 
 print("Starting...")
 
+# standard settings used for scripted runs
 if (!exists("sim_name"))     sim_name     = "run"
 if (!exists("under_prior"))  under_prior  = false
 if (!exists("epoch_str"))    epoch_str    = v("paleo","modern","ancient","null")[2]
-
 
 # filesystem variables
 fp           = "/Users/mlandis/projects/gh_biome_shift/"
@@ -16,12 +16,11 @@ tree_fn      = data_fp + "viburnum.no_fossil.radseq_only.tre"
 range_fn     = data_fp + "viburnum_areas_a6b3.nex"
 out_fn       = fp + "output/" + sim_name
 out_fn       = out_fn + "." + epoch_str
-
-#under_prior = true
 if (under_prior) {
     out_fn = out_fn + ".prior"
 }
 
+# print output filename as a check
 print("out_fn = " + out_fn)
 
 # analysis helper variables
@@ -30,17 +29,17 @@ mni = 1
 print_gen = 50
 n_gen = 25000
 
-# initial tree and taxa
+# initialize tree and taxa
 phy <- readTrees(tree_fn)[1]
 root_age <- phy.rootAge()
 taxa = phy.taxa()
 n_taxa = taxa.size()
 n_branches = 2 * n_taxa - 2
 
-# some data
+# read in biome-range dataset
 dat_range = readDiscreteCharacterData(range_fn)
 
-# build the times
+# read in the time intervals for the time-stratified process
 epoch_times_raw = readDataDelimitedFile(times_fn, delimiter=",")
 n_epochs = epoch_times_raw.nrows()
 for (i in 1:n_epochs) {
@@ -60,12 +59,23 @@ for (i in 1:n_graphs) {
 n_areas = graph[1][1].size()
 n_states = n_areas * n_biomes
 
+# construct the time-stratified regional biome shift model
 source("model_biome.Rev")
 
-monitors[mni++] = mnScreen(root_age, printgen=1)
+# monitor to screen
+monitors[mni++] = mnScreen(root_age, printgen=print_gen)
+
+# monitor tree variable in file (phy is constant for this analysis, but we monitor
+# the variable in case you wish to jointly estimate phy)
 monitors[mni++] = mnFile(phy, filename=out_fn+".tre",printgen=print_gen)
+
+# monitor parameters related to the construction of the root state freqs, \pi(m_{root})
 monitors[mni++] = mnFile(y,w_graph,rf_simplex, filename=out_fn+".rf.log",printgen=print_gen)
+
+# monitor model parameters
 monitors[mni++] = mnModel(filename=out_fn+".model.log",printgen=print_gen )
+
+# monitor ancestral states
 monitors[mni++] = mnJointConditionalAncestralState(tree=phy,
                                                    ctmc=m_biome,
                                                    filename=out_fn+".states.log",
@@ -73,14 +83,21 @@ monitors[mni++] = mnJointConditionalAncestralState(tree=phy,
                                                    withTips=true,
                                                    separator="\t",
                                                    printgen=print_gen)
+
+# monitor stochastic mappings
 monitors[mni++] = mnStochasticCharacterMap(filename=out_fn+".stoch.log",
                                            printgen=print_gen,
                                            ctmc=m_biome)
 
+# wrap model variables into model object
 mdl = model(phy)
-xx
+
+# construct MCMC object
 ch = mcmc(moves, monitors, mdl)
+
+# run MCMC analysis
 ch.run(n_gen, underPrior=under_prior)
 
+# quit
 q()
 
