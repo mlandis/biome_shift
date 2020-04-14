@@ -1,7 +1,0 @@
-index,region_code,region_name
-1,SEAs,Southeast_Asia
-2,EAs,East_Asia
-3,Eur,Europe
-4,NAm,North_America
-5,CAm,Central_America
-6,SAm,South_America

@@ -12,8 +12,8 @@ fp           = "/Users/mlandis/projects/gh_biome_shift/"
 data_fp      = fp + "data/"
 atlas_fn     = data_fp + "atlas/"
 times_fn     = data_fp + "atlas/epoch_times.txt"
-tree_fn      = data_fp + "viburnum.no_fossil.radseq_only.tre"
-range_fn     = data_fp + "viburnum_areas_a6b3.nex"
+tree_fn      = data_fp + "viburnum.tre"
+range_fn     = data_fp + "viburnum.nex"
 out_fn       = fp + "output/" + sim_name
 out_fn       = out_fn + "." + epoch_str
 if (under_prior) {
@@ -47,7 +47,7 @@ for (i in 1:n_epochs) {
 }
 
 # build the connectivity graphs
-graph_names = [ "land", "tropical", "temperate", "boreal" ]
+graph_names = [ "land", "tropical", "warm", "cold" ]
 n_graphs = graph_names.size()
 n_biomes = n_graphs - 1
 for (i in 1:n_graphs) {
