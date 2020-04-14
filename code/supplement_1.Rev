@@ -87,7 +87,10 @@ y_strong <- 1.0
 w_adj := v( y_marginal, y_weak, y_strong )
 
 
-
+# Now we build the vector of rate matrices, Q = ( Q(1), ..., Q(M) ) where each
+# rate matrix is defined as Q(m) = w_U * Q_U + w_G * Q_G + w_B * Q_B. Rather
+# than
+#  assigning a diff
 for (i in 1:n_epochs) {
     print("  constructing Q(" + i + ")")
     for (j0 in 1:n_biomes) {
