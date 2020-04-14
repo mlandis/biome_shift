@@ -1,79 +1,72 @@
 
-print("Configuring time-stratified regional biome shift process...")
+print("Configuring regional biome shift process...")
 
-# Define a matrix where biome-region state values are indexed
-# by what biome (row) and what region (column) determines any
-# biome-region state's value
+# area x biome -> states
 states = [ [  1,  2,  3,  4,  5,  6],
            [  7,  8,  9, 10, 11, 12],
            [ 13, 14, 15, 16, 17, 18] ]
 
-
-# Assign a diffuse prior rate on the biome shift rate that is
-# uniform over orders of magnitude
-
+# biome-range clock
 rate_biome ~ dnLoguniform( min=1e-4, max=1e1 )
 rate_biome.setValue( 3e-2 )
+
 moves[mvi++] = mvScale(rate_biome, lambda=5, weight=5)
 moves[mvi++] = mvScale(rate_biome, lambda=1, weight=5)
 moves[mvi++] = mvScale(rate_biome, lambda=0.5, weight=3)
 moves[mvi++] = mvScale(rate_biome, lambda=0.1, weight=5)
 
-
-# Define the expected proportion of biome shift events (br_base)
-# relative to dispersal events (dr_base).
-
+# relative rates of biome/dispersal change
 br_base ~ dnUniform(0,1)
-br_base.setValue(0.5)
+br_base.setValue(0.75)
 moves[mvi++ ] = mvScale(br_base, lambda=1.0, weight=2)
 moves[mvi++ ] = mvScale(br_base, lambda=0.5, weight=2)
 dr_base := abs(1.0 - br_base)
 
+# build the biome rate matrix, giving the base rate of shifting from
+# biome i into biome j (independent of area/time)
 
-# Construct the base biome shift rates (\beta_{ij}) between
-# all pairs of biomes. We assume all base biome shift rates
-# are Uniform(0,1) iid in this analysis, but fix the shift
-# rates between Tropical and Cold Temperate biomes to equal
-# zero. This is largely to show that one can structure the
-# transition rates among biomes under this model.
-
-for (i in 1:n_biomes) {
-    for (j in 1:n_biomes) {
-        br[i][j] <- abs(0)
-    }
-}
-
+#biome_rates ~ dnDirichlet( rep(1,4) )
 for (i in 1:4) {
     biome_rates[i] ~ dnUniform(0,1)
-    biome_rates[i].setValue(0.5)
+    #biome_rates[i].setValue(1.0)
     moves[mvi++] = mvScale( biome_rates[i], lambda=1.0, weight=2 )
     moves[mvi++] = mvScale( biome_rates[i], lambda=0.5, weight=2 )
 }
 
-br_TW := biome_rates[1]; br[1][2] := br_TW
-br_WT := biome_rates[2]; br[2][1] := br_WT
-br_WC := biome_rates[3]; br[2][3] := br_WC
-br_CW := biome_rates[4]; br[3][2] := br_CW
+br_idx = 1
+for (i in 1:n_biomes) {
+    for (j in 1:n_biomes) {
+        br[i][j] := abs(0)
+    }
+    # ordered character H <-> L <-> T
+    if (i < n_biomes) {
+        #print( i, i+1, br_idx )
+        br[i][i+1] := biome_rates[br_idx++]
+    }
+    if (i > 1) {
+        #print( i, i-1, br_idx )
+        br[i][i-1] := biome_rates[br_idx++]
+    }
+}
+br_WT := br[1][2]
+br_TW := br[2][1]
+br_WC := br[2][3]
+br_CW := br[3][2]
 
-
-# Construct the base dispersal rates (\delta_{kl}) for
-# between all pairs of regions. We assume all base dispersal
-# rates are equal in this analysis (i.e. with the arbitrary
-# value of 1). We rely on w_G and Q_G to explain the dispersal
-# rate structure among regions.
-
+# build the base dispersal rates within a given biome (all 1s)
+# dispersal rates w/in biome
+dr_idx = 1
 for (i in 1:n_areas) {
     for (j in 1:n_areas) {
-        dr[i][j] <- abs(1)
+        dr[i][j] <- abs(0)
+        if (i != j) {
+            dr[i][j] <- abs(1)
+        }
     }
 }
 
-# Construct the vector of mixture weights, w, that will define
-#
-#    Q(m) = w_U * Q_U + w_G * Q_G + w_B * Q_B
-#
-# where w_U + w_G + w_B = 1
-
+# weights for using the different graphs
+# elements are (LDD-null, SDD-land, biome)
 w_graph ~ dnDirichlet( [1,1,1] )
 w_graph.setValue( simplex(1,2,16) ) # strong
 moves[mvi++] = mvSimplexElementScale(w_graph, alpha=20, weight=5)
@@ -84,28 +77,28 @@ w_B := w_graph[3]
 w_not_B := abs(1.0 - w_B)
 
 
-# Here we construct we define the parameter values for strong, weak, and
-# marginal features for availability/connectivity among biomes/regions.
-# In effect, we use the vector w_adj below to translate the strong/weak/marg.
-# codes in the various adjacency matrices, A_G(m), A_T(m), A_W(m), A_C(m), into
-# the strong (1), weak (0<=y<=1), and marginal (0) values.
-y_marginal <- abs(0)
-y_strong <- abs(1)
+# areas with subdominant habitats receive the penalty w_subdominant
+# areas with only a marginal habitat receive the penalty w_marginal_base * w_subdominant
+
+# rate matrix
+# adaptation penalty to biomes that are subdominant/marginal
 if (epoch_str == "null") {
-    w_adj <- v( 1, 1, 1 )
+    w_adj <- v(1, 1, 1)
 } else {
+  
     y ~ dnUniform(0,1)
     y.setValue(0.1) # med
     moves[mvi++] = mvScale(y, lambda=2, weight=3)
     moves[mvi++] = mvScale(y, lambda=0.5, weight=3)
     moves[mvi++] = mvScale(y, lambda=0.2, weight=3)
-    w_adj := v( abs(0.0), y, abs(1.0) )
+    w_adj := v( 0.0, y, 1.0 )
 }
 
 
 
+r_epsilon = 1e-4
 for (i in 1:n_epochs) {
-    print("  constructing Q(" + i + ")")
+    print("    building epoch " + i)
     for (j0 in 1:n_biomes) {
         for (j1 in 1:n_biomes) {
             for (k0 in 1:n_areas) {
@@ -114,6 +107,8 @@ for (i in 1:n_epochs) {
                     # simple state
                     s1 = (j1-1) * n_areas + k1
 
+                    # print state
+                    #print( i + " -- (" + j0 + ", " + k0 + ") -> (" + j1 + ", " + k1 + ") : " +s0 + " -> " +  s1 )
                   
                     # initialize rate
                     r[i][s0][s1] <- abs(0)
@@ -122,71 +117,54 @@ for (i in 1:n_epochs) {
                     diff_biome     = (j0 != j1)
                     diff_area      = (k0 != k1)
 
-                    # biome-graph index (Land:1, Trop:2, Warm:3, Cold:4)
-                    w0 = j0 + 1
-                    w1 = j1 + 1
+                    w0 = j0+1
+                    w1 = j1+1
 
                     if (diff_biome && diff_area) {
                         # one event at a time
                         # ... do nothing
                     } else if (diff_biome) {
-                        # what feature code does area k0 have for biome w1 at time i?
-                        # feature code (Strong:1, Weak:2, Marginal:3)
-                        w_B_idx = graph[i][w1][k0][k0] + 1
-
-                        # the transition rate between biomes depends on whether the new biome (j1/w1)
-                        # is present in the current region (k0)
-                        r[i][s0][s1] := br_base * br[j0][j1] * (w_not_B + w_B*w_adj[w_B_idx])
+                        # what code does area k0 have for biome w1 at time i?
+                        w_biome_idx = graph[i][w1][k0][k0] + 1
+                        # the transition rate between biomes depends on whether biome j1 is local to area k0/k1
+                        r[i][s0][s1] := br_base * br[j0][j1] * (w_not_B + w_B*w_adj[w_biome_idx])
                     } else if (diff_area) {
-                        # what feature code does the edge (k0,k1) have for biome w1 at time i?
-                        # feature code (Strong:1, Weak:2, Marginal:3)
-                        w_G_idx = graph[i][1][k0][k1] + 1
-                        w_B_idx = graph[i][w1][k0][k1] + 1
+                        # what code does the edge (k0,k1) have for biome w1 at time i?
+                        w_land_idx = graph[i][1][k0][k1] + 1
+                        w_biome_idx = graph[i][w1][k0][k1] + 1
 
-                        # the transition rate between areas depends on the current biome state (j0)
-                        # and the destination area (k1) and the biomes in the destination area (j1/w1)
-                        r[i][s0][s1] := dr_base * dr[k0][k1] * (w_U + w_G*w_adj[w_G_idx] + w_B*w_adj[w_B_idx])
-                    }
-                    
-                    if ( !(diff_biome && diff_area) && (s0 != s1) ) {
-                        # show rates assigned to each state pair, for non-zero and non-diagonal vallues
-                        # uncomment line below to print
-                        # print("    " + i + " -- (" + j0 + ", " + k0 + ") -> (" + j1 + ", " + k1 + ") : " +s0 + " -> " +  s1 + " = " + r[i][s0][s1] )
+                        # the transition rate between areas depends on the current biome state (j0) and the biomes in the destination area (k1)
+                        r[i][s0][s1] := dr_base * dr[k0][k1] * (w_U + w_G*w_adj[w_land_idx] + w_B*w_adj[w_biome_idx])
                     }
                 }
             }
         }
     }
-
-    # construct the rate matrix, Q(m), from each time interval's rates
     Q[i] := fnFreeK(r[i], rescaled=!true, matrixExponentialMethod="scalingAndSquaring")
 }
 
-# Construct the final time-stratified model depending on the assigned biome structure model
+
+
 if (epoch_str == "paleo" || epoch_str == "null") {
-    # all time intervals; note that null assumes w_U <- 1, so structure is ignored
     Q_epoch := fnEpoch(Q=Q, times=epoch_times, rates=rep(1,n_epochs))
 } else if (epoch_str == "modern") {
-    # final time interval (Recent)
     Q_epoch := Q[n_epochs]
 } else if (epoch_str == "ancient") {
-    # first time interval (Late Cretaceous)
     Q_epoch := Q[1]
 }
  
-# Construct the root state probabilities from a long branch running under Q
+
+# root frequencies are drawn from a long branch running under the biome-range process, Q
 if (epoch_str == "modern") {
     Q_rf := fnFreeK(r[n_epochs], rescaled=!true, matrixExponentialMethod="eigen")
 } else {
     Q_rf := fnFreeK(r[1], rescaled=!true, matrixExponentialMethod="eigen")
 }
 
-# We approximately pi_root with exp{mu*Q_rf}_{2} where mu ~= 300. Note, mu is independent
-# of the global clock, rate_biome.
 rf_P_limit := Q_rf.getTransitionProbabilities(rate=10.0, startAge=100.0, endAge=root_age)
 rf_simplex := simplex(rf_P_limit[2])
 
-# Construct the phylogenetic CTMC with the time-stratified regional biome shift process
+print("  clamping m_biome")
 m_biome ~ dnPhyloCTMC(tree=phy,
                       Q=Q_epoch,
                       branchRates=rate_biome,
@@ -195,6 +173,7 @@ m_biome ~ dnPhyloCTMC(tree=phy,
                       nSites=1)
 
 m_biome.clamp(dat_range)
+print("  ...clamped!")
 
 
 
