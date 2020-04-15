@@ -1,4 +1,4 @@
-# biome_shift
+# A time-stratified regional biome shift model
 
 This directory contains the main files needed to conduct the inferences published in 
 
