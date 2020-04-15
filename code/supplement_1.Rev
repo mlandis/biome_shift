@@ -88,9 +88,23 @@ w_adj := v( y_marginal, y_weak, y_strong )
 
 
 # Now we build the vector of rate matrices, Q = ( Q(1), ..., Q(M) ) where each
-# rate matrix is defined as Q(m) = w_U * Q_U + w_G * Q_G + w_B * Q_B. Rather
-# than
-#  assigning a diff
+# each rate matrix is defined as Q(m) = w_U * Q_U + w_G * Q_G + w_B * Q_B.
+# Q(m) is quite sparse, so instead of computing Q(m) as the weighted sum of
+# the matrices, we instead compute each non-zero element in Q(m) individually
+# using the for-loop below. This design is more computationally efficient
+# when Q(m) must be updated repeatedly, as is the case with MCMC, but it also
+# helps to display the internal structure of Q(m).
+#
+# The for-loop will first iterate over the time intervals (i in 1:n_epochs), 
+# then the source biome state (j0 in 1:n_biomes), then the destination biome
+# state (j1 in 1:n_biomes), then the source region (k0 in 1:n_areas), and
+# finally the destination region (k1 in 1:n_areas). We convert the indices
+# for j0, j1, k0, and k1 into source and destination compound states,
+# s0 and s1, corresponding to the 3x6=18 biome-region states. For each set
+# of indices for i, s0, and s1, we then determine the corresponding 
+# event type and event rate parameterization (if non-zero) for that element
+# in the rate matrix, Q(m).
+
 for (i in 1:n_epochs) {
     print("  constructing Q(" + i + ")")
     for (j0 in 1:n_biomes) {
