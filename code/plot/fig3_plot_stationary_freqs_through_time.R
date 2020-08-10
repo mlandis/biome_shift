@@ -5,7 +5,7 @@ source("biome_shift_util.R")
 # filesystem
 fp = "/Users/mlandis/projects/gh_biome_shift/"
 plot_fp = paste(fp, "code/plot/", sep="")
-plot_fn = paste(plot_fp, "fig3_stationary_freqs_through_time.csv", sep="")
+plot_fn = paste(fp, "output/stationary_freqs_through_time.csv", sep="")
 col_fn = paste(plot_fp, "biome_region_colors.txt", sep="")
 
 # get colors for biome+region states
