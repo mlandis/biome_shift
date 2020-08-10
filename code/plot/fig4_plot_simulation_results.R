@@ -11,7 +11,7 @@ source("biome_shift_util.R")
 # filesystem
 fp = '/Users/mlandis/projects/gh_biome_shift/'
 out_fp = paste(fp, 'output/sim/', sep='')
-plot_fn = paste(fp, 'code/plot/fig/fig_sim_results.pdf', sep='')
+plot_fn = paste(fp, 'code/plot/fig/fig4_sim_results.pdf', sep='')
 
 # get true parameter values
 true_fn = paste(fp, 'output/sim/true_params.txt', sep='')
