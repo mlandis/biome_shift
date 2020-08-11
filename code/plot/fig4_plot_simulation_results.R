@@ -6,6 +6,8 @@ library(kdensity)
 library(cowplot)
 library(Cairo)
 library(gginnards)
+library(dplyr)
+
 source("biome_shift_util.R")
 
 # filesystem
@@ -28,7 +30,7 @@ strength_name = c("V.Strong","Strong","Moderate","Weak","Null")
 param_name = c('w_biome', 'w_land', 'w_null', 'w_not_biome', 'y_subdominant')
 
 n_sim = length(sim_name)
-n_rep = 100
+n_rep = 1
 f_burn = 0.10
 
 # collect results
@@ -52,11 +54,17 @@ for (i in 1:n_sim) {
         str = strength_name[i]
         
         # summarize posterior in various ways
+        print("a")
         avg = apply(x, 2, median)
+        print("b")
         hpd = apply(x, 2, hdi)
+        print("c")
         cover = is_covered(hpd, true_params, mdl, str)
+        print("d")
         bf = apply(x, 2, compute_bf)
+        print("e")
         y = t(rbind(avg, hpd))
+        print("f")
         
         # reformat posterior stats
         m = melt(y)

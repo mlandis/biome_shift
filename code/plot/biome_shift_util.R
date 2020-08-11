@@ -48,16 +48,22 @@ make_bf = function(x) {
 
 is_covered = function(hpd, tp, mdl, str) {
     x = tp[ tp$model==mdl & tp$strength==str, ]
+    print(x)
     cn = colnames(hpd)
+    print(cn)
     hpd_low = hpd[c("lower"),cn]
     hpd_up = hpd[c("upper"),cn]
     covered = (x[cn] > hpd_low & x[cn] < hpd_up)
-    if (covered) {
-        return("Covered")
-    } else {
-        return("Not covered")
-    }
-    return(covered)
+    
+    return( sapply( covered, function(y) { if (y) { "Covered" } else { "Not covered" } } ))
+    # print(x)
+    # print(covered)
+    # if (covered) {
+    #     return("Covered")
+    # } else {
+    #     return("Not covered")
+    # }
+    # return(covered)
 }
 
 lnL_beta = function(par, ...) {
