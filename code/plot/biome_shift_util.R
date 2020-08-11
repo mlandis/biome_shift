@@ -144,8 +144,8 @@ fig6_add_epoch_times <- function( p, max_age, x_offset=0, dy=0.1 ) {
         p = append_layers(p, box, position = "bottom")
     }
     for (k in 1:length(epoch_names)) {
-        print(x_pos_mid[k])
-        print(epoch_names[k])
+        #print(x_pos_mid[k])
+        #print(epoch_names[k])
         p = p + annotate("text", x=-x_pos_mid[k], y=0-dy, label=epoch_names[k], hjust=0.5, size=2.5)
     }
     return(p)
@@ -287,6 +287,7 @@ make_match_bins = function( d, epoch_times, atlas_list ) {
     colnames(ret) = c("age","count","Support","prop","match")
     ret$match = c("mismatch", "match")[ret$match+1]
     ret$match = factor( ret$match, ordered=T, levels=c("mismatch","match") )
+    ret$age2 = as.numeric(ret$age + 0.5)
     
     return(ret)
    
@@ -396,6 +397,7 @@ make_lstt_dat = function(fn, n_states, f_burn=0, thinby=1) {
     d2 = data.frame(dat_plot_2,  stringsAsFactors=FALSE)
     colnames(d2) = c("age","count","StateValue", "State","Support")
     d2$age = as.numeric(d2$age)
+    d2$age2 = as.numeric(d2$age + 0.5)
     d2$count = as.numeric(d2$count)
     d2$prop = as.numeric(d2$count / length(iterations) )
     d2$StateValue = as.numeric(d2$StateValue)
