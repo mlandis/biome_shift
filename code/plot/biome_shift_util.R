@@ -99,3 +99,28 @@ make_bf_cat = function(x) {
     ret = factor(cat_lbl[idx], ordered=T, levels=rev(cat_lbl))
     return(ret)
 }
+
+# Fig 5
+
+fig5_add_epoch_times <- function( p, max_age, dy_bars, dy_text ) {
+    
+    max_x = max(p$data$x)
+    max_y = max(p$data$y)
+    epoch_names = c("Late\nCretaceous","Paleocene","Early\nEocene","Mid/Late\nEocene","Oligocene","Early\nMiocene","Mid/Late\nMiocene","Recent")
+ 
+    x_pos = max_x-c(75, 65, 56, 48, 33.9, 23, 16, 5.3, 0)
+    y_pos = rep(max_y, length(x_pos))
+    x_pos_mid = ( x_pos[1:(length(x_pos)-1)] + x_pos[2:length(x_pos)] ) / 2 
+
+    for (k in 2:(length(x_pos))) {
+        box_col = "gray92"
+        if (k %% 2 == 0) box_col = "white"
+        box = geom_rect( xmin=x_pos[k-1], xmax=x_pos[k], ymin=dy_bars, ymax=y_pos[k], fill=box_col )
+        p = append_layers(p, box, position = "bottom")
+    }
+    for (k in 1:length(epoch_names)) {
+        p = p + annotate( geom="text", label=epoch_names[k], x=x_pos_mid[k], y=dy_text, hjust=0.5, size=2.5)
+    }
+    return(p)
+
+}
