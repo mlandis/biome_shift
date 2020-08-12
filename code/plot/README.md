@@ -1,6 +1,6 @@
 This folder contains code to plot Figures 2 through 8 from
 
-> Landis, MJ, EJ Edwards, & MJ Donoghue. Modeling phylogenetic biome shifts on a planet with a past. Systematic Biology (advance access), https://doi.org/10.1093/sysbio/syaa045.
+> MJ Landis, EJ Edwards, & MJ Donoghue. Modeling phylogenetic biome shifts on a planet with a past. Systematic Biology (advance access), https://doi.org/10.1093/sysbio/syaa045.
 
 Scripts for plotting figures:
 
