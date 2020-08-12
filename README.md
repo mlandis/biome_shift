@@ -2,7 +2,7 @@
 
 This directory contains the main files needed to conduct the inferences published in 
 
-> Landis, MJ, EJ Edwards, & MJ Donoghue. Modeling phylogenetic biome shifts on a planet with a past. Systematic Biology (advance access), https://doi.org/10.1093/sysbio/syaa045.
+> MJ Landis, EJ Edwards, & MJ Donoghue. Modeling phylogenetic biome shifts on a planet with a past. Systematic Biology (advance access), https://doi.org/10.1093/sysbio/syaa045.
 
 Subdirectories:
 - `data` contains the dataset used for the RevBayes analyses.
