@@ -154,7 +154,7 @@ for (i in 1:n_epochs) {
                     } else if (diff_biome) {
                         event_type = "biome_shift"
                         # what feature code does area k0 have for biome w1 at time i?
-                        # feature code (Strong:1, Weak:2, Marginal:3)
+                        # feature code (Strong:3, Weak:2, Marginal:1)
                         w_B_idx = graph[i][w1][k0][k0] + 1
                         
                         # the transition rate between biomes depends on whether the new biome (j1/w1)
@@ -163,7 +163,7 @@ for (i in 1:n_epochs) {
                     } else if (diff_area) {
                         event_type = "dispersal"
                         # what feature code does the edge (k0,k1) have for biome w1 at time i?
-                        # feature code (Strong:1, Weak:2, Marginal:3)
+                        # feature code (Strong:3, Weak:2, Marginal:1)
                         w_G_idx = graph[i][1][k0][k1] + 1
                         w_B_idx = graph[i][w1][k0][k1] + 1
 
